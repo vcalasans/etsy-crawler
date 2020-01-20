@@ -1,0 +1,6 @@
+django
+gunicorn
+django-heroku
+pandas
+psycopg2-binary
+openpyxl

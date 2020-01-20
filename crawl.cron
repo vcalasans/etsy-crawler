@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Sleep for 5 seconds. If you are starting more than one tmux session
+#   "at the same time", then make sure they all sleep for different periods
+#   or you can experience problems
+/bin/sleep 1
+
+source /home/vcalasans/.bashrc
+
+/usr/bin/tmux new-session -d -s airticketcrawler
+/usr/bin/tmux send-keys -t airticketcrawler "source /home/vcalasans/.bashrc" C-m
+
+/usr/bin/tmux send-keys -t airticketcrawler "cd ~/projects/example/heroku/airticketcrawler && workon heroku && source .env && python crawl.py" C-m

@@ -1,0 +1,11 @@
+/.idea/
+/__pycache__/
+**/__pycache__
+**/__pycache__/
+*~
+*.swp
+*.swo
+*.log
+*.egg-info
+*.egg
+*.env
