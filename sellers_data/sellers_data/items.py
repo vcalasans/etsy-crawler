@@ -1,14 +1,11 @@
-# -*- coding: utf-8 -*-
-
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
-
 class SellersDataItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    name = scrapy.Field()
+    date = scrapy.Field(serializer=str)
+    number_of_sales = scrapy.Field()
+    number_of_reviews = scrapy.Field()
+    number_of_listings = scrapy.Field()
+    on_etsy_since = scrapy.Field()
+    free_shipping_percent = scrapy.Field()
+    avg_price = scrapy.Field()
