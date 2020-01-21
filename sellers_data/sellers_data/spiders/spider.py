@@ -19,6 +19,7 @@ class SellersDataSpider(scrapy.Spider):
         search = Search(using=client, index='sellers') \
             .query('match_all') \
             .source(fields=['url']) \
+            .sort({"lastmod": "desc"}) \
             .sort({"lastUpdatedData": {"order": "desc", "missing": "_first"}})[0:1000]
         response = search.execute()
         urls = [hit.url for hit in response]
@@ -38,10 +39,11 @@ class SellersDataSpider(scrapy.Spider):
         number_of_listings = response.xpath('//script/text()').re_first(r'"listings_total_count":(\d+)')
         if number_of_listings:
             number_of_listings = int(number_of_listings)
-        if number_of_listings == 0:
+        number_of_listings_in_page = len(response.xpath('//span[@class="currency-value"]').getall())
+        if number_of_listings_in_page == 0:
             free_shipping_percent = 0
         else:
-            free_shipping_percent = len(response.xpath('//span/text()').re(r'FREE shipping')) / len(response.xpath('//span[@class="currency-value"]').getall())
+            free_shipping_percent = len(response.xpath('//span/text()').re(r'FREE shipping')) / number_of_listings_in_page
         if free_shipping_percent:
             free_shipping_percent = float(free_shipping_percent)
         prices = list(map(locale.atof, response.xpath('//span[@class="currency-value"]/text()').getall()))
