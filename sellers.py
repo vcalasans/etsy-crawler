@@ -51,7 +51,12 @@ def get_sellers(sellers_info_url):
         if name:
             url = entry.find(f"{NAMESPACE}loc").text
             lastmod = entry.find(f"{NAMESPACE}lastmod").text
-            seller = Seller(meta={'id': name}, name=name, url=url, lastmod=lastmod)
+            seller = Seller(
+                meta={'id': name},
+                name=name, url=url,
+                lastmod=lastmod,
+                lastUpdated=datetime.now(),
+            )
             sellers.append(seller)
     return sellers
 

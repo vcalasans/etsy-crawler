@@ -1,6 +1,5 @@
-import pprint as pprint
+from pprint import pprint
 
-class SellersDataPipeline(object):
+class SellersDataPipeline:
     def process_item(self, item, spider):
-        pprint(item)
         return item
