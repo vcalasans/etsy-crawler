@@ -4,7 +4,7 @@ from progress.bar import Bar
 import requests
 from retry import retry
 import xml.etree.ElementTree as ET
-from elasticsearch_dsl import Document, Date, Integer, Keyword, Text
+from elasticsearch_dsl import Document, Date, Integer, Double
 from elasticsearch_dsl.connections import connections
 from elasticsearch.helpers import bulk
 
@@ -21,6 +21,7 @@ class Seller(Document):
     url = Text()
     lastmod = Date()
     lastUpdated = Date()
+    lastUpdatedData = Date()
 
     class Index:
         name = 'sellers'

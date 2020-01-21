@@ -34,6 +34,7 @@ AUTOTHROTTLE_ENABLED = True
 AUTOTHROTTLE_TARGET_CONCURRENCY = 2.0
 # Enable showing throttling stats for every response received:
 #AUTOTHROTTLE_DEBUG = False
+TELNETCONSOLE_ENABLED = False
 
-# LOG_FILE = './log_seller_data.txt'
-# LOG_LEVEL = logging.INFO
+LOG_FILE = './sellers_data.log'
+LOG_LEVEL = logging.INFO
