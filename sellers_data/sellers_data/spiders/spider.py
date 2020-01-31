@@ -20,12 +20,10 @@ class SellersDataSpider(scrapy.Spider):
 
     def start_requests(self):
         search = Search(using=self.client, index='sellers') \
-            .query({'range': { 'lastmod': {'gte': '2020-01-25' } }}) \
-            .source(fields=['url', 'id']) \
-            .sort(
-                {"lastUpdateData": {"order": "asc", "missing": "_first"}},
-                {"lastmod": "desc"},
-            )[0:1000]
+            .query({'bool': {'must_not': {'exists': {'field': 'lastCrawlId' }}}}) \
+            .query({'range': { 'lastmod': {'gte': '2020-01-30' }}}) \
+            .source(fields=['url']) \
+            .sort( {"lastmod": "desc"})[0:1000]
         response = search.execute()
         urls = [hit.url for hit in response]
         for url in urls:
@@ -65,6 +63,7 @@ class SellersDataSpider(scrapy.Spider):
             avg_price = sum(prices) / len(prices)
         return SellersDataItem(
             name=name_from_url(response.url),
+            url=response.url,
             date=datetime.now(),
             number_of_sales=number_of_sales,
             number_of_reviews=number_of_reviews,

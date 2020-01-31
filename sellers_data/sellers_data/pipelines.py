@@ -6,6 +6,8 @@ from elasticsearch import Elasticsearch
 
 logging.getLogger('elasticsearch').setLevel(logging.WARNING)
 
+CRAWL_ID = 1
+
 class SellerData(Document):
     name = Text()
     date = Date()
@@ -15,6 +17,7 @@ class SellerData(Document):
     onEtsySince = Integer()
     freeShippingPercent = Double()
     avgPrice = Double()
+    crawlID = Integer()
 
     class Index:
         name = 'sellers_data'
@@ -23,6 +26,7 @@ class SellersDataPipeline:
     def open_spider(self, spider):
         connections.create_connection(hosts=['localhost'])
         self.client = Elasticsearch()
+        SellerData.init()
 
     def process_item(self, item, spider):
         print(f"Crawling {item['name']}")
@@ -34,12 +38,18 @@ class SellersDataPipeline:
             numberOfListings=item['number_of_listings'],
             onEtsySince=item['on_etsy_since'],
             freeShippingPercent=item['free_shipping_percent'],
-            avgPrice=item['avg_price']
+            avgPrice=item['avg_price'],
+            crawlId=CRAWL_ID
         )
         data.save()
 
-        search = Search(using=self.client, index='sellers').query({'match': { 'name': item['name']}})
+        search = Search(using=self.client, index='sellers') \
+            .query({'match': { 'url': item['url']}})
         id = search.execute()[0].meta.id
-        self.client.update(index="sellers", id=id, body={"doc": {"lastUpdateData": datetime.now()} })
+        self.client.update(
+            index="sellers",
+            id=id,
+            body={"doc": {"lastCrawlId": CRAWL_ID} }
+        )
 
         return item

@@ -1,7 +1,7 @@
 from pprint import pprint
 from datetime import datetime
 import logging
-from elasticsearch_dsl import Document, Text, Date, Integer, Double
+from elasticsearch_dsl import Document, Text, Date, Integer
 from elasticsearch_dsl.connections import connections
 from elasticsearch import Elasticsearch
 
@@ -12,7 +12,7 @@ class Seller(Document):
     url = Text()
     lastmod = Date()
     lastUpdated = Date()
-    lastUpdatedData = Date()
+    lastCrawlId = Integer()
 
     class Index:
         name = 'sellers'
@@ -31,7 +31,6 @@ class SellersPipeline:
             name=item['name'],
             url=item['url'],
             lastmod=item['lastmod'],
-            lastUpdated=datetime.now(),
         )
 
         return item
