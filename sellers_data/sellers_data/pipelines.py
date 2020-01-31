@@ -46,10 +46,12 @@ class SellersDataPipeline:
         search = Search(using=self.client, index='sellers') \
             .query({'match': { 'url': item['url']}})
         id = search.execute()[0].meta.id
+        print(f'The id is: {id}')
         self.client.update(
             index="sellers",
             id=id,
             body={"doc": {"lastCrawlId": CRAWL_ID} }
         )
+        print('The update has been done!')
 
         return item

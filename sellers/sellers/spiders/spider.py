@@ -41,10 +41,9 @@ class SellersSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        # print(f"Crawling {response.url}")
         urls = response.xpath("/*[name()='urlset']/*[name()='url']/*[name()='loc']/text()").getall()
         names = list(map(strip_seller_name, urls))
-        # print(f"Got {len(names)} stores!")
+        print(f"Crawled {response.url}, got {len(names)} stores")
         lastmods = response.xpath("/*[name()='urlset']/*[name()='url']/*[name()='lastmod']/text()").getall()
         return [
             SellerItem(name=name, url=url, lastmod=lastmod) for

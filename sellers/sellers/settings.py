@@ -38,4 +38,4 @@ TELNETCONSOLE_ENABLED = False
 
 LOG_FILE = './sellers.log'
 LOG_LEVEL = logging.INFO
-# LOG_STDOUT = True
+LOG_STDOUT = True
