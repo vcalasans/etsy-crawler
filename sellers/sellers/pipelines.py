@@ -25,7 +25,6 @@ class SellersPipeline:
 
     def process_item(self, item, spider):
         data = Seller(meta={'id': item['name']})
-        # print(f"updating {item['name']}")
         data.update(
             doc_as_upsert=True,
             name=item['name'],
