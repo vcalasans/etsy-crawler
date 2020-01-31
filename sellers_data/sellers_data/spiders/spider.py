@@ -11,20 +11,32 @@ logging.getLogger('elasticsearch').setLevel(logging.WARNING)
 
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
+def name_from_url(url):
+    return url.strip('https://www.etsy.com/shop/')
+
 class SellersDataSpider(scrapy.Spider):
     name = "sellers_data"
+    client = Elasticsearch()
 
     def start_requests(self):
-        client = Elasticsearch()
-        search = Search(using=client, index='sellers') \
-            .query('match_all') \
-            .source(fields=['url']) \
-            .sort({"lastmod": "desc"}) \
-            .sort({"lastUpdatedData": {"order": "desc", "missing": "_first"}})[0:1000]
+        search = Search(using=self.client, index='sellers') \
+            .query({'range': { 'lastmod': {'gte': '2020-01-25' } }}) \
+            .source(fields=['url', 'id']) \
+            .sort(
+                {"lastUpdateData": {"order": "asc", "missing": "_first"}},
+                {"lastmod": "desc"},
+            )[0:1000]
         response = search.execute()
         urls = [hit.url for hit in response]
         for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            yield scrapy.Request(url=url, callback=self.parse, errback=self.handle_errors)
+
+    def handle_errors(self, failure):
+        response = failure.value.response
+        status = response.status
+        url = response.url
+        self.logger.warning(f"Got error in {url} with status: {status}")
+        self.client.delete(index='sellers', id=name_from_url(url))
 
     def parse(self, response):
         number_of_sales = response.xpath(f'//span[contains(@class, "shop-sales")]/descendant-or-self::*/text()').re_first(r'(\d+) Sales')
@@ -52,7 +64,7 @@ class SellersDataSpider(scrapy.Spider):
         else:
             avg_price = sum(prices) / len(prices)
         return SellersDataItem(
-            name=response.url.strip('https://www.etsy.com/shop/'),
+            name=name_from_url(response.url),
             date=datetime.now(),
             number_of_sales=number_of_sales,
             number_of_reviews=number_of_reviews,

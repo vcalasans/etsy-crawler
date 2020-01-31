@@ -1,6 +1,6 @@
 from datetime import datetime
 import logging
-from elasticsearch_dsl import Document, Text, Date, Integer, Double
+from elasticsearch_dsl import Document, Text, Date, Integer, Double, Search
 from elasticsearch_dsl.connections import connections
 from elasticsearch import Elasticsearch
 
@@ -25,6 +25,7 @@ class SellersDataPipeline:
         self.client = Elasticsearch()
 
     def process_item(self, item, spider):
+        print(f"Crawling {item['name']}")
         data = SellerData(
             name=item['name'],
             date=item['date'],
@@ -37,6 +38,8 @@ class SellersDataPipeline:
         )
         data.save()
 
-        self.client.update(index="sellers", id=item['name'], body={"doc": {"lastUpdateData": datetime.now()} })
+        search = Search(using=self.client, index='sellers').query({'match': { 'name': item['name']}})
+        id = search.execute()[0].meta.id
+        self.client.update(index="sellers", id=id, body={"doc": {"lastUpdateData": datetime.now()} })
 
         return item

@@ -1,9 +1,9 @@
 import logging
 
-BOT_NAME = 'sellers_data'
+BOT_NAME = 'sellers'
 
-SPIDER_MODULES = ['sellers_data.spiders']
-NEWSPIDER_MODULE = 'sellers_data.spiders'
+SPIDER_MODULES = ['sellers.spiders']
+NEWSPIDER_MODULE = 'sellers.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'sellers_data (+http://www.yourdomain.com)'
@@ -19,7 +19,7 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'sellers_data.pipelines.SellersDataPipeline': 300,
+    'sellers.pipelines.SellersPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -31,11 +31,11 @@ AUTOTHROTTLE_ENABLED = True
 #AUTOTHROTTLE_MAX_DELAY = 60
 # The average number of requests Scrapy should be sending in parallel to
 # each remote server
-AUTOTHROTTLE_TARGET_CONCURRENCY = 6.0
+AUTOTHROTTLE_TARGET_CONCURRENCY = 8.0
 # Enable showing throttling stats for every response received:
 #AUTOTHROTTLE_DEBUG = False
 TELNETCONSOLE_ENABLED = False
 
-LOG_FILE = './sellers_data.log'
+LOG_FILE = './sellers.log'
 LOG_LEVEL = logging.INFO
 # LOG_STDOUT = True
